@@ -90,10 +90,10 @@ class AssetTypeDto {
   fields: FieldDto[];
 }
 
+
 export class CreateServiceConfigByIdDto {
-  @IsUUID()
-  
-  service_id: string;
+  @IsString()
+  service_key: string;
 
   @ValidateNested()
   @Type(() => MetaDto)

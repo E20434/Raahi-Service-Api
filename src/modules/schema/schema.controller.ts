@@ -7,15 +7,10 @@ import { CreateServiceConfigByIdDto } from './dtos/create-service-config-by-id.d
 export class SchemaController {
   constructor(private readonly schemaService: SchemaService) {}
 
-  // @Post()
-  // @UsePipes(new ValidationPipe({ transform: true }))
-  // async createServiceConfig(@Body() createDto: CreateServiceConfigDto) {
-  //   return this.schemaService.createServiceConfig(createDto);
-  // }
 
-  @Post('by-service-id')
+  @Post('by-service-key')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async createServiceConfigById(@Body() createDto: CreateServiceConfigByIdDto) {
+  async createServiceConfigByKey(@Body() createDto: CreateServiceConfigByIdDto) {
     return this.schemaService.createServiceConfigById(createDto);
   }
 }

@@ -17,11 +17,8 @@ export class AssetType {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ name: 'asset_fields_json', type: 'jsonb' })
+  @Column({ name: 'fields_json', type: 'jsonb' })
   assetFieldsJson: any;
-
-  @Column({ name: 'display_order', type: 'integer' })
-  displayOrder: number;
 
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
