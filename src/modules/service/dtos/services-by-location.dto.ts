@@ -1,9 +1,16 @@
-export class ServiceDto {
+export class AvailableLocationDto {
   location_service_id: string;
+  location_id: string;
+  location_name: string;
+  location_type: string;
+}
+
+export class ServiceDto {
   service_id: string;
   service_key: string;
   service_name: string;
   service_description: string;
+  available_locations: AvailableLocationDto[];
 }
 
 export class CategoryDto {
