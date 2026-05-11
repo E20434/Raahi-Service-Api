@@ -4,6 +4,7 @@ import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
 } from '@testcontainers/postgresql';
+import request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ServiceModule } from '../src/modules/service/service.module';
@@ -71,14 +72,18 @@ describe('Services By Location Smoke (e2e)', () => {
     }
   });
 
-  it('should seed Sri Lanka location into the test database', async () => {
-    const location = await locationRepository.findOne({
-      where: { id: '00000000-0000-0000-0000-000000000001' },
-    });
+  it('should return Sri Lanka with empty categories', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/services/by-location/00000000-0000-0000-0000-000000000001')
+      .expect(200);
 
-    expect(location).toBeDefined();
-    expect(location?.id).toBe('00000000-0000-0000-0000-000000000001');
-    expect(location?.name).toBe('Sri Lanka');
-    expect(location?.type).toBe('COUNTRY');
+    expect(response.body).toEqual({
+      selected_location: {
+        id: '00000000-0000-0000-0000-000000000001',
+        name: 'Sri Lanka',
+        type: 'COUNTRY',
+      },
+      categories: [],
+    });
   });
 });
