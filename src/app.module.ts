@@ -50,4 +50,4 @@ import { SchemaModule } from './modules/schema/schema.module';
     SchemaModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

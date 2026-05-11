@@ -5,11 +5,10 @@ import { CreateServiceConfigByIdDto } from './dtos/create-service-config-by-id.d
 
 @Controller('api/service-config')
 export class SchemaController {
-  constructor(private readonly schemaService: SchemaService) {}
+  constructor(private readonly schemaService: SchemaService) { }
 
 
   @Post('by-service-key')
-  @UsePipes(new ValidationPipe({ transform: true }))
   async createServiceConfigByKey(@Body() createDto: CreateServiceConfigByIdDto) {
     return this.schemaService.createServiceConfigById(createDto);
   }
