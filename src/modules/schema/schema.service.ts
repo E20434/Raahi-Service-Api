@@ -105,15 +105,15 @@ export class SchemaService {
     }
   }
 
-  async getServiceConfigByLocationServiceId(locationServiceId: string) {
+  async getServiceConfigByLocationServiceId(serviceLocationKey: string) {
     // Find LocationService by id
     const locationService = await this.locationServiceRepo.findOne({
-      where: { id: locationServiceId }
+      where: { serviceLocationKey: serviceLocationKey}
     });
 
     if (!locationService) {
       throw new ResourceNotFoundException(
-        `LocationService with id '${locationServiceId}' not found`,
+        `LocationService with id '${serviceLocationKey}' not found`,
       );
     }
 

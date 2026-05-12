@@ -2,8 +2,8 @@ import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity('location_service')
 export class LocationService {
-  @PrimaryColumn({ type: 'uuid' })
-  id: string;
+   @PrimaryColumn({ name: 'service_location_key', type: 'varchar' })
+  serviceLocationKey: string;
 
   @Column({ name: 'location_code', type: 'varchar' })
   location_code: string;
