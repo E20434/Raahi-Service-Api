@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateServiceConfigByIdDto } from './dtos/create-service-config-by-id.dto';
 import { ServiceOnboardingSchema, SchemaStatus, ServiceSpecialField, AssetType } from './entities';
 import { Service } from '../service/entities/service.entity';
 import { LocationService } from '../service/entities/location-service.entity';
+import { ResourceNotFoundException, BadRequestException } from '../../common/exceptions/custom.exception';
 
 @Injectable()
 export class SchemaService {
@@ -28,13 +29,13 @@ export class SchemaService {
     const { service_key, meta, special_elements = [], asset_types = [] } = dto;
     // Verify service exists by service_key
     const service = await this.serviceRepo.findOne({
-      where: { serviceKey: service_key }
+      where: { service_key: service_key }
     });
     if (!service) {
-      throw new NotFoundException(`Service with key '${service_key}' not found`);
+      throw new ResourceNotFoundException(`Service with key '${service_key}' not found`);
     }
     // Auto-generate schema_key
-    const schemaKey = `${service.serviceKey}_v${meta.schema_version}`;
+    const schemaKey = `${service.service_key}_v${meta.schema_version}`;
 
     // Transaction to insert all records
     const queryRunner = this.dataSource.createQueryRunner();
@@ -44,7 +45,7 @@ export class SchemaService {
     try {
       // Create Schema
       const schema = queryRunner.manager.create(ServiceOnboardingSchema, {
-        serviceId: service.id,
+        serviceId: service.service_key,
         schemaKey: schemaKey,
         schemaVersion: meta.schema_version,
         maxAssetsAllowed: meta.rules.max_assets_allowed,
@@ -86,14 +87,19 @@ export class SchemaService {
 
       return {
         schema_id: savedSchema.id,
-        service_id: service.id,
+        service_key: service.service_key,
         schema_key: schemaKey,
         status: savedSchema.status,
         created_at: savedSchema.createdAt,
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw error;
+      if (error instanceof BadRequestException || error instanceof ResourceNotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'Failed to create service config',
+      );
     } finally {
       await queryRunner.release();
     }
@@ -106,12 +112,16 @@ export class SchemaService {
     });
 
     if (!locationService) {
-      throw new NotFoundException(`LocationService with id '${locationServiceId}' not found`);
+      throw new ResourceNotFoundException(
+        `LocationService with id '${locationServiceId}' not found`,
+      );
     }
 
     // Check if onboarding_schema_id exists
     if (!locationService.onboardingSchemaId) {
-      throw new NotFoundException(`No onboarding schema assigned to this location service`);
+      throw new ResourceNotFoundException(
+        `No onboarding schema assigned to this location service`,
+      );
     }
 
     // Fetch the schema
@@ -123,21 +133,25 @@ export class SchemaService {
     });
 
     if (!schema) {
-      throw new NotFoundException(`Schema with id '${locationService.onboardingSchemaId}' not found`);
+      throw new ResourceNotFoundException(
+        `Schema with id '${locationService.onboardingSchemaId}' not found`,
+      );
     }
 
     // Check if schema status is PUBLISHED
     if (schema.status !== SchemaStatus.PUBLISHED) {
-      throw new NotFoundException(`Schema is not published. Current status: ${schema.status}`);
+      throw new BadRequestException(
+        `Schema is not published. Current status: ${schema.status}`,
+      );
     }
 
     // Fetch service to get service_type
     const service = await this.serviceRepo.findOne({
-      where: { id: schema.serviceId }
+      where: { service_key: schema.serviceId }
     });
 
     if (!service) {
-      throw new NotFoundException(`Service not found for schema`);
+      throw new ResourceNotFoundException(`Service not found for schema`);
     }
 
     // Fetch special fields and asset types

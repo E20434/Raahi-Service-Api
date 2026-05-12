@@ -2,8 +2,8 @@ import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity('location')
 export class Location {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryColumn({ type: 'varchar' })
+  location_code: string;
 
   @Column({ type: 'varchar' })
   name: string;
@@ -11,8 +11,8 @@ export class Location {
   @Column({ type: 'varchar' })
   type: string;
 
-  @Column({ name: 'parent_id', type: 'uuid', nullable: true })
-  parentId: string;
+  @Column({ name: 'parent_location_code', type: 'varchar', nullable: true })
+  parent_location_code: string;
 
   @Column({ name: 'is_active', type: 'boolean' })
   isActive: boolean;

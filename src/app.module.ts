@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServiceModule } from './modules/service/service.module';
 
 // (later you will import feature modules here)
-// import { LocationModule } from './modules/location/location.module';
 import { SchemaModule } from './modules/schema/schema.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -44,10 +45,15 @@ import { SchemaModule } from './modules/schema/schema.module';
       }),
     }),
 
-    // Feature modules
+    
     ServiceModule,
-    // LocationModule,
     SchemaModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

@@ -12,14 +12,14 @@ export class LocationRepository {
 
   async findById(id: string): Promise<Location | null> {
     return this.repository.findOne({
-      where: { id, isActive: true },
+      where: { location_code: id, isActive: true },
     });
   }
 
   async findByIds(ids: string[]): Promise<Location[]> {
     if (ids.length === 0) return [];
     return this.repository.find({
-      where: { id: In(ids), isActive: true },
+      where: { location_code: In(ids), isActive: true },
     });
   }
 
@@ -31,12 +31,12 @@ export class LocationRepository {
       const currentId = toProcess.shift()!;
       
       const children = await this.repository.find({
-        where: { parentId: currentId, isActive: true },
+        where: { parent_location_code: currentId, isActive: true },
       });
 
       for (const child of children) {
-        allIds.push(child.id);
-        toProcess.push(child.id);
+        allIds.push(child.location_code);
+        toProcess.push(child.location_code);
       }
     }
 

@@ -2,14 +2,11 @@ import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity('service')
 export class Service {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryColumn({ type: 'varchar' })
+  service_key: string;
 
-  @Column({ name: 'category_id', type: 'uuid' })
-  categoryId: string;
-
-  @Column({ name: 'service_key', type: 'varchar' })
-  serviceKey: string;
+  @Column({ name: 'category_key', type: 'varchar' })
+  category_key: string;
 
   @Column({ type: 'varchar' })
   name: string;

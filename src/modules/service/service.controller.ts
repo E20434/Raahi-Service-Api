@@ -1,6 +1,7 @@
-import { Controller, Get, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ServiceConfigService } from './service.service';
 import { ServicesByLocationResponse } from './dtos/services-by-location.dto';
+import { ResourceNotFoundException, BadRequestException } from '../../common/exceptions/custom.exception';
 
 @Controller('api/services')
 export class ServiceConfigController {
@@ -13,10 +14,15 @@ export class ServiceConfigController {
     try {
       return await this.serviceConfigService.getServicesByLocation(locationId);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
+      if (
+        error instanceof ResourceNotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
       }
-      throw new BadRequestException('An unknown error occurred');
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'An unknown error occurred',
+      );
     }
   }
 }

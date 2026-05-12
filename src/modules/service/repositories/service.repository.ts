@@ -12,7 +12,7 @@ export class ServiceRepository {
 
   async findByIds(ids: string[]): Promise<Service[]> {
     return this.repository.find({
-      where: { id: In(ids), isActive: true },
+      where: { service_key: In(ids), isActive: true },
     });
   }
 }

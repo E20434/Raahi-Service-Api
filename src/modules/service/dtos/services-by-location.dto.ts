@@ -1,6 +1,6 @@
 export class AvailableLocationDto {
   location_service_id: string;
-  location_id: string;
+  location_code: string;
   location_name: string;
   location_type: string;
 }
@@ -21,7 +21,7 @@ export class CategoryDto {
 }
 
 export class LocationDto {
-  id: string;
+  location_code: string;
   name: string;
   type: string;
 }
