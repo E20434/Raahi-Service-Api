@@ -28,13 +28,13 @@ export class SchemaService {
     const { service_key, meta, special_elements = [], asset_types = [] } = dto;
     // Verify service exists by service_key
     const service = await this.serviceRepo.findOne({
-      where: { serviceKey: service_key }
+      where: { service_key: service_key }
     });
     if (!service) {
       throw new NotFoundException(`Service with key '${service_key}' not found`);
     }
     // Auto-generate schema_key
-    const schemaKey = `${service.serviceKey}_v${meta.schema_version}`;
+    const schemaKey = `${service.service_key}_v${meta.schema_version}`;
 
     // Transaction to insert all records
     const queryRunner = this.dataSource.createQueryRunner();
@@ -44,7 +44,7 @@ export class SchemaService {
     try {
       // Create Schema
       const schema = queryRunner.manager.create(ServiceOnboardingSchema, {
-        serviceId: service.id,
+        serviceId: service.service_key,
         schemaKey: schemaKey,
         schemaVersion: meta.schema_version,
         maxAssetsAllowed: meta.rules.max_assets_allowed,
@@ -86,7 +86,7 @@ export class SchemaService {
 
       return {
         schema_id: savedSchema.id,
-        service_id: service.id,
+        service_key: service.service_key,
         schema_key: schemaKey,
         status: savedSchema.status,
         created_at: savedSchema.createdAt,
@@ -133,7 +133,7 @@ export class SchemaService {
 
     // Fetch service to get service_type
     const service = await this.serviceRepo.findOne({
-      where: { id: schema.serviceId }
+      where: { service_key: schema.serviceId }
     });
 
     if (!service) {

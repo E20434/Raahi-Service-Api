@@ -13,13 +13,13 @@ export class LocationServiceRepository {
   async findByLocationIds(locationIds: string[]): Promise<LocationService[]> {
     if (locationIds.length === 0) return [];
     return this.repository.find({
-      where: { locationId: In(locationIds), isActive: true },
+      where: { location_code: In(locationIds), isActive: true },
     });
   }
 
   async findByServiceId(serviceId: string): Promise<LocationService[]> {
     return this.repository.find({
-      where: { serviceId, isActive: true },
+      where: { service_key: serviceId, isActive: true },
     });
   }
 }

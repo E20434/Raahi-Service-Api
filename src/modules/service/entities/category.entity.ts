@@ -2,11 +2,8 @@ import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity('category')
 export class Category {
-  @PrimaryColumn('uuid')
-  id: string;
-
-  @Column({ name: 'category_key', type: 'varchar' })
-  categoryKey: string;
+  @PrimaryColumn({ type: 'varchar' })
+  category_key: string;
 
   @Column({ type: 'varchar' })
   name: string;

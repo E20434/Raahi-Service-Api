@@ -11,7 +11,7 @@ export class ServiceOnboardingSchema {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'service_id', type: 'uuid' })
+  @Column({ name: 'service_key', type: 'varchar' })
   serviceId: string;
 
   @Column({ name: 'schema_key', type: 'varchar' })

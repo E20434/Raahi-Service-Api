@@ -12,13 +12,13 @@ export class CategoryRepository {
 
   async findByIds(ids: string[]): Promise<Category[]> {
     return this.repository.find({
-      where: { id: In(ids), isActive: true },
+      where: { category_key: In(ids), isActive: true },
     });
   }
 
   async findById(id: string): Promise<Category | null> {
     return this.repository.findOne({
-      where: { id, isActive: true },
+      where: { category_key: id, isActive: true },
     });
   }
 }
