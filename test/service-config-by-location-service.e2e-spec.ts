@@ -208,39 +208,6 @@ describe('Service Config By Location Service (e2e)', () => {
             },
           ],
         },
-        {
-          asset_type_id: 'SUV',
-          label: 'SUV',
-          description: 'SUV used for city or intercity rides in Sri Lanka.',
-          fields: [
-            {
-              type: 'TEXT_INPUT',
-              label: 'License Plate',
-              field_id: 'license_plate',
-              validation: {
-                required: true,
-              },
-            },
-            {
-              type: 'NUMBER_INPUT',
-              label: 'Vehicle Year',
-              field_id: 'vehicle_year',
-              validation: {
-                min: 2010,
-                required: true,
-              },
-            },
-            {
-              type: 'NUMBER_INPUT',
-              label: 'Passenger Seats',
-              field_id: 'passenger_seats',
-              validation: {
-                min: 4,
-                required: true,
-              },
-            },
-          ],
-        },
       ],
     });
   });

@@ -79,12 +79,15 @@ export class SchemaService {
 
     // Fetch special fields and asset types
     const specialFields = await this.specialFieldRepo.find({
-      where: { schemaId: schema.id, isActive: true }
+      where: { schemaId: schema.id, isActive: true },
+      // TODO: Re-enable once Neon schema has the `display_order` column.
+      // order: { displayOrder: 'ASC' },
     });
 
     const assetTypes = await this.assetTypeRepo.find({
       where: { schemaId: schema.id, isActive: true },
-      order: { displayOrder: 'ASC' },
+      // TODO: Re-enable once Neon schema has the `display_order` column.
+      // order: { displayOrder: 'ASC' },
     });
 
     // Format special elements
