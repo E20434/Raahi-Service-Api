@@ -23,7 +23,7 @@ export class ServiceConfigService {
     const allLocationCodes = await this.locationRepository.getAllChildLocationCodes(locationCode);
 
     // Find all location services for these locations
-    const locationServices = await this.locationServiceRepository.findByLocationIds(allLocationCodes);
+    const locationServices = await this.locationServiceRepository.findByLocationCodes(allLocationCodes);
     if (locationServices.length === 0) {
       return {
         selected_location: this.mapLocationToDto(location),
@@ -48,7 +48,7 @@ export class ServiceConfigService {
     // Build a map of service key -> all location services for that service
     const serviceLocationServicesMap = new Map<string, LocationService[]>();
     for (const service of services) {
-      const allServiceLocationServices = await this.locationServiceRepository.findByServiceId(service.service_key);
+      const allServiceLocationServices = await this.locationServiceRepository.findByServiceKey(service.service_key);
       serviceLocationServicesMap.set(service.service_key, allServiceLocationServices);
     }
 
