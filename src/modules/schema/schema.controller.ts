@@ -26,7 +26,7 @@ export class SchemaController {
     }
   }
 
-  @Get('by-location-service/:locationServiceId')
+  @Get('by-location-service/:serviceLocationKey')
   async getServiceConfigByLocationServiceId(
     @Param('serviceLocationKey') serviceLocationKey: string,
   ) {
