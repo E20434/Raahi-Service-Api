@@ -1,5 +1,5 @@
 export class AvailableLocationDto {
-  location_service_id: string;
+  location_service_key: string;
   location_code: string;
   location_name: string;
   location_type: string;
