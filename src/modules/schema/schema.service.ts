@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ServiceOnboardingSchema, SchemaStatus, ServiceSpecialField, AssetType } from './entities';
 import { Service } from '../service/entities/service.entity';
 import { LocationService } from '../service/entities/location-service.entity';
-import { ResourceNotFoundException, BadRequestException } from '../../common/exceptions/custom.exception';
+import { ResourceNotFoundException } from '../../common/exceptions/custom.exception';
 
 @Injectable()
 export class SchemaService {
@@ -83,7 +83,8 @@ export class SchemaService {
     });
 
     const assetTypes = await this.assetTypeRepo.find({
-      where: { schemaId: schema.id, isActive: true }
+      where: { schemaId: schema.id, isActive: true },
+      order: { displayOrder: 'ASC' },
     });
 
     // Format special elements
