@@ -74,7 +74,7 @@ export class ServiceConfigService {
               .map(ls => {
                 const loc = locationsMap.get(ls.location_code);
                 return {
-                  location_service_id: ls.id,
+                  location_service_id: ls.service_location_key,
                   location_code: ls.location_code,
                   location_name: loc?.name || 'Unknown',
                   location_type: loc?.type || 'Unknown',
