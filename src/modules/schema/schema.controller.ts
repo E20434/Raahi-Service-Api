@@ -28,10 +28,10 @@ export class SchemaController {
 
   @Get('by-location-service/:locationServiceId')
   async getServiceConfigByLocationServiceId(
-    @Param('locationServiceId') locationServiceId: string,
+    @Param('serviceLocationKey') serviceLocationKey: string,
   ) {
     try {
-      return await this.schemaService.getServiceConfigByLocationServiceId(locationServiceId);
+      return await this.schemaService.getServiceConfigByLocationServiceId(serviceLocationKey);
     } catch (error) {
       if (
         error instanceof ResourceNotFoundException ||
