@@ -13,17 +13,17 @@ export class ServiceConfigService {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  async getServicesByLocation(locationId: string): Promise<ServicesByLocationResponse> {
-    const location = await this.locationRepository.findById(locationId);
+  async getServicesByLocation(locationCode: string): Promise<ServicesByLocationResponse> {
+    const location = await this.locationRepository.findById(locationCode);
     if (!location) {
-      throw new ResourceNotFoundException(`Location with code '${locationId}' not found`);
+      throw new ResourceNotFoundException(`Location with code '${locationCode}' not found`);
     }
 
     // Get all child location codes (including the parent location)
-    const allLocationIds = await this.locationRepository.getAllChildLocationIds(locationId);
+    const allLocationCodes = await this.locationRepository.getAllChildLocationIds(locationCode);
 
     // Find all location services for these locations
-    const locationServices = await this.locationServiceRepository.findByLocationIds(allLocationIds);
+    const locationServices = await this.locationServiceRepository.findByLocationIds(allLocationCodes);
     if (locationServices.length === 0) {
       return {
         selected_location: this.mapLocationToDto(location),
@@ -36,9 +36,9 @@ export class ServiceConfigService {
     const services = await this.serviceRepository.findByIds(serviceIds);
 
     // Get all locations involved
-    const allLocationIdsInServices = [...new Set(locationServices.map(ls => ls.location_code))];
+    const allLocationCodesInServices = [...new Set(locationServices.map(ls => ls.location_code))];
     const locationsMap = new Map<string, Location>();
-    const locations = await this.locationRepository.findByIds(allLocationIdsInServices);
+    const locations = await this.locationRepository.findByIds(allLocationCodesInServices);
     locations.forEach(loc => locationsMap.set(loc.location_code, loc));
 
     // Get categories
@@ -53,7 +53,7 @@ export class ServiceConfigService {
     }
 
     // Convert allLocationIds to a Set for faster lookup
-    const allLocationIdsSet = new Set(allLocationIds);
+    const allLocationCodesSet = new Set(allLocationCodes);
 
     const categoriesWithServices: CategoryDto[] = categories
       .sort((a, b) => a.displayOrder - b.displayOrder)
@@ -70,7 +70,7 @@ export class ServiceConfigService {
             
             // Filter available_locations to only include locations within the selected location hierarchy
             const available_locations: AvailableLocationDto[] = allServiceLocationServices
-              .filter(ls => allLocationIdsSet.has(ls.location_code))
+              .filter(ls => allLocationCodesSet.has(ls.location_code))
               .map(ls => {
                 const loc = locationsMap.get(ls.location_code);
                 return {

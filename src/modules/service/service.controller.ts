@@ -7,12 +7,12 @@ import { ResourceNotFoundException, BadRequestException } from '../../common/exc
 export class ServiceConfigController {
   constructor(private readonly serviceConfigService: ServiceConfigService) {}
 
-  @Get('by-location/:locationId')
+  @Get('by-location/:locationCode')
   async getServicesByLocation(
-    @Param('locationId') locationId: string,
+    @Param('locationCode') locationCode: string,
   ): Promise<ServicesByLocationResponse> {
     try {
-      return await this.serviceConfigService.getServicesByLocation(locationId);
+      return await this.serviceConfigService.getServicesByLocation(locationCode);
     } catch (error) {
       if (
         error instanceof ResourceNotFoundException ||
