@@ -58,7 +58,6 @@ export class ServiceConfigService {
     const categoriesWithServices: CategoryDto[] = categories
       .sort((a, b) => a.displayOrder - b.displayOrder)
       .map(category => ({
-        category_id: category.category_key,
         category_key: category.category_key,
         category_name: category.name,
         services: services
@@ -83,7 +82,6 @@ export class ServiceConfigService {
               .sort((a, b) => a.location_name.localeCompare(b.location_name));
 
             return {
-              service_id: service.service_key,
               service_key: service.service_key,
               service_name: service.name,
               service_description: service.description,
