@@ -12,7 +12,7 @@ export class ServiceOnboardingSchema {
   id: string;
 
   @Column({ name: 'service_key', type: 'varchar' })
-  serviceId: string;
+  serviceKey: string;
 
   @Column({ name: 'schema_key', type: 'varchar' })
   schemaKey: string;

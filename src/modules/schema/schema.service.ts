@@ -45,7 +45,7 @@ export class SchemaService {
     try {
       // Create Schema
       const schema = queryRunner.manager.create(ServiceOnboardingSchema, {
-        serviceId: service.service_key,
+        serviceKey: service.service_key,
         schemaKey: schemaKey,
         schemaVersion: meta.schema_version,
         maxAssetsAllowed: meta.rules.max_assets_allowed,
@@ -131,13 +131,14 @@ export class SchemaService {
     const schema = await this.schemaRepo.findOne({
       where: { 
         id: locationService.onboardingSchemaId,
+        serviceKey: locationService.service_key,
         isActive: true 
       }
     });
 
     if (!schema) {
       throw new ResourceNotFoundException(
-        `Schema with id '${locationService.onboardingSchemaId}' not found`,
+        `Schema not found for location service key '${serviceLocationKey}'`,
       );
     }
 
@@ -150,7 +151,10 @@ export class SchemaService {
 
     // Fetch service to get service_type
     const service = await this.serviceRepo.findOne({
-      where: { service_key: schema.serviceId }
+      where: {
+        service_key: schema.serviceKey,
+        isActive: true,
+      }
     });
 
     if (!service) {
