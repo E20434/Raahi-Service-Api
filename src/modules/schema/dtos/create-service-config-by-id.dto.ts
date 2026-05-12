@@ -1,4 +1,10 @@
-import { IsString, IsInt, ValidateNested, IsArray, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  ValidateNested,
+  IsArray,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class RulesDto {
@@ -89,7 +95,6 @@ class AssetTypeDto {
   @Type(() => FieldDto)
   fields: FieldDto[];
 }
-
 
 export class CreateServiceConfigByIdDto {
   @IsString()

@@ -7,6 +7,7 @@ import { ServiceModule } from './modules/service/service.module';
 // (later you will import feature modules here)
 import { SchemaModule } from './modules/schema/schema.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { VendorModule } from './modules/vendor/vendor.module';
 
 @Module({
   imports: [
@@ -45,9 +46,9 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
       }),
     }),
 
-    
     ServiceModule,
     SchemaModule,
+    VendorModule,
   ],
   providers: [
     {
@@ -56,4 +57,4 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

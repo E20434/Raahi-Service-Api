@@ -1,15 +1,19 @@
-import { Controller, Post, Get, Body, Query, ValidationPipe, UsePipes, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { SchemaService } from './schema.service';
 import { CreateServiceConfigByIdDto } from './dtos/create-service-config-by-id.dto';
-import { ResourceNotFoundException, BadRequestException } from '../../common/exceptions/custom.exception';
+import {
+  ResourceNotFoundException,
+  BadRequestException,
+} from '../../common/exceptions/custom.exception';
 
 @Controller('api/service-config')
 export class SchemaController {
-  constructor(private readonly schemaService: SchemaService) { }
-
+  constructor(private readonly schemaService: SchemaService) {}
 
   @Post('by-service-key')
-  async createServiceConfigByKey(@Body() createDto: CreateServiceConfigByIdDto) {
+  async createServiceConfigByKey(
+    @Body() createDto: CreateServiceConfigByIdDto,
+  ) {
     try {
       return await this.schemaService.createServiceConfigById(createDto);
     } catch (error) {
@@ -20,7 +24,9 @@ export class SchemaController {
         throw error;
       }
       throw new BadRequestException(
-        error instanceof Error ? error.message : 'Failed to create service config',
+        error instanceof Error
+          ? error.message
+          : 'Failed to create service config',
       );
     }
   }
@@ -30,7 +36,9 @@ export class SchemaController {
     @Param('serviceLocationKey') serviceLocationKey: string,
   ) {
     try {
-      return await this.schemaService.getServiceConfigByLocationServiceId(serviceLocationKey);
+      return await this.schemaService.getServiceConfigByLocationServiceId(
+        serviceLocationKey,
+      );
     } catch (error) {
       if (
         error instanceof ResourceNotFoundException ||
@@ -39,7 +47,9 @@ export class SchemaController {
         throw error;
       }
       throw new BadRequestException(
-        error instanceof Error ? error.message : 'Failed to retrieve service config',
+        error instanceof Error
+          ? error.message
+          : 'Failed to retrieve service config',
       );
     }
   }

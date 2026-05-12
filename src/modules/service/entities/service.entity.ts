@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Category } from './category.entity';
 
 @Entity('service')
 export class Service {
@@ -25,4 +26,8 @@ export class Service {
 
   @Column({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
+
+  @ManyToOne(() => Category, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'category_key' })
+  category: Category;
 }

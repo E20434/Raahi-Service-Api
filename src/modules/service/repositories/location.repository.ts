@@ -23,13 +23,15 @@ export class LocationRepository {
     });
   }
 
-  async getAllChildLocationCodes(parentLocationCode: string): Promise<string[]> {
+  async getAllChildLocationCodes(
+    parentLocationCode: string,
+  ): Promise<string[]> {
     const allCodes: string[] = [parentLocationCode];
     const toProcess: string[] = [parentLocationCode];
 
     while (toProcess.length > 0) {
       const currentLocationCode = toProcess.shift()!;
-      
+
       const children = await this.repository.find({
         where: { parent_location_code: currentLocationCode, isActive: true },
       });
