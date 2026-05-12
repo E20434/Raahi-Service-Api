@@ -108,7 +108,7 @@ export class SchemaService {
   async getServiceConfigByLocationServiceId(serviceLocationKey: string) {
     // Find LocationService by id
     const locationService = await this.locationServiceRepo.findOne({
-      where: { serviceLocationKey: serviceLocationKey}
+      where: { service_location_key: serviceLocationKey}
     });
 
     if (!locationService) {

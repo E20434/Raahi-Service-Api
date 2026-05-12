@@ -10,9 +10,9 @@ export class ServiceRepository {
     private readonly repository: Repository<Service>,
   ) {}
 
-  async findByIds(ids: string[]): Promise<Service[]> {
+  async findByKeys(keys: string[]): Promise<Service[]> {
     return this.repository.find({
-      where: { service_key: In(ids), isActive: true },
+      where: { service_key: In(keys), isActive: true },
     });
   }
 }
