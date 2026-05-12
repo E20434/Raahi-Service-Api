@@ -36,5 +36,14 @@ export function buildLocationsFixture(now: Date) {
       createdAt: now,
       updatedAt: now,
     },
+    {
+      location_code: 'LK-GAL',
+      name: 'Galle',
+      type: 'CITY',
+      parent_location_code: 'LK',
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    },
   ];
 }

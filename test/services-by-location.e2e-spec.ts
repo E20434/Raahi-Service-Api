@@ -283,6 +283,58 @@ describe('Services By Location (e2e)', () => {
     });
   });
 
+  it('should return the expected service listing for Temple of the Tooth', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/services/by-location/LK-KDY-TEMPLE_OF_TOOTH')
+      .expect(200);
+
+    expect(response.body).toEqual({
+      selected_location: {
+        location_code: 'LK-KDY-TEMPLE_OF_TOOTH',
+        name: 'Temple of the Tooth',
+        type: 'POINT',
+      },
+      categories: [
+        {
+          category_key: 'TOUR_GUIDES',
+          category_name: 'Tour Guides',
+          services: [
+            {
+              service_key: 'MUSEUM_LANDMARK_GUIDES',
+              service_name: 'Museum & Landmark Guides',
+              service_description:
+                'Guided experiences for museums, landmarks, and important local sites.',
+              available_locations: [
+                {
+                  location_service_key:
+                    'museum_landmark_guides_LK-KDY-TEMPLE_OF_TOOTH',
+                  location_code: 'LK-KDY-TEMPLE_OF_TOOTH',
+                  location_name: 'Temple of the Tooth',
+                  location_type: 'POINT',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('should return an empty category list for a valid location with no services', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/services/by-location/LK-GAL')
+      .expect(200);
+
+    expect(response.body).toEqual({
+      selected_location: {
+        location_code: 'LK-GAL',
+        name: 'Galle',
+        type: 'CITY',
+      },
+      categories: [],
+    });
+  });
+
   it('should return 404 for an unknown location code', async () => {
     const response = await request(app.getHttpServer())
       .get('/api/services/by-location/NOT-EXIST')
