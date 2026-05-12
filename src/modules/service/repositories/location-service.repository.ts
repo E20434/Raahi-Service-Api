@@ -10,16 +10,16 @@ export class LocationServiceRepository {
     private readonly repository: Repository<LocationService>,
   ) {}
 
-  async findByLocationIds(locationIds: string[]): Promise<LocationService[]> {
-    if (locationIds.length === 0) return [];
+  async findByLocationCodes(locationCodes: string[]): Promise<LocationService[]> {
+    if (locationCodes.length === 0) return [];
     return this.repository.find({
-      where: { location_code: In(locationIds), isActive: true },
+      where: { location_code: In(locationCodes), isActive: true },
     });
   }
 
-  async findByServiceId(serviceId: string): Promise<LocationService[]> {
+  async findByServiceKey(serviceKey: string): Promise<LocationService[]> {
     return this.repository.find({
-      where: { service_key: serviceId, isActive: true },
+      where: { service_key: serviceKey, isActive: true },
     });
   }
 }
