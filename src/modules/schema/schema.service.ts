@@ -144,8 +144,8 @@ export class SchemaService {
 
     // Check if schema status is PUBLISHED
     if (schema.status !== SchemaStatus.PUBLISHED) {
-      throw new BadRequestException(
-        `Schema is not published. Current status: ${schema.status}`,
+      throw new ResourceNotFoundException(
+        `Published schema not found for location service key '${serviceLocationKey}'`,
       );
     }
 
