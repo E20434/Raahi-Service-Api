@@ -52,10 +52,10 @@ describe('Services By Location Smoke (e2e)', () => {
 
     const now = new Date();
     await locationRepository.insert({
-      id: '00000000-0000-0000-0000-000000000001',
+      location_code: 'LK',
       name: 'Sri Lanka',
       type: 'COUNTRY',
-      parentId: null as unknown as string,
+      parent_location_code: null as unknown as string,
       isActive: true,
       createdAt: now,
       updatedAt: now,
@@ -74,12 +74,12 @@ describe('Services By Location Smoke (e2e)', () => {
 
   it('should return Sri Lanka with empty categories', async () => {
     const response = await request(app.getHttpServer())
-      .get('/api/services/by-location/00000000-0000-0000-0000-000000000001')
+      .get('/api/services/by-location/LK')
       .expect(200);
 
     expect(response.body).toEqual({
       selected_location: {
-        id: '00000000-0000-0000-0000-000000000001',
+        location_code: 'LK',
         name: 'Sri Lanka',
         type: 'COUNTRY',
       },
