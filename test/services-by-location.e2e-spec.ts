@@ -53,6 +53,14 @@ describe('Services By Location (e2e)', () => {
     await seedLocationServices(now);
   }
 
+  async function resetSriLankaApi1Fixture() {
+    await locationServiceRepository.clear();
+    await serviceRepository.clear();
+    await categoryRepository.clear();
+    await locationRepository.clear();
+    await seedSriLankaApi1Fixture();
+  }
+
   beforeAll(async () => {
     container = await new PostgreSqlContainer('postgres:16-alpine').start();
 
@@ -83,9 +91,11 @@ describe('Services By Location (e2e)', () => {
     categoryRepository = dataSource.getRepository(Category);
     serviceRepository = dataSource.getRepository(ServiceEntity);
     locationServiceRepository = dataSource.getRepository(LocationService);
-
-    await seedSriLankaApi1Fixture();
   }, 180_000);
+
+  beforeEach(async () => {
+    await resetSriLankaApi1Fixture();
+  });
 
   afterAll(async () => {
     if (app) {
@@ -333,6 +343,114 @@ describe('Services By Location (e2e)', () => {
       },
       categories: [],
     });
+  });
+
+  it('should not return services from inactive location_service rows', async () => {
+    await locationServiceRepository.update(
+      { service_location_key: 'group_rides_shuttles_LK-KDY' },
+      { isActive: false },
+    );
+
+    const response = await request(app.getHttpServer())
+      .get('/api/services/by-location/LK-KDY')
+      .expect(200);
+
+    expect(response.body).toEqual({
+      selected_location: {
+        location_code: 'LK-KDY',
+        name: 'Kandy',
+        type: 'CITY',
+      },
+      categories: [
+        {
+          category_key: 'TOUR_GUIDES',
+          category_name: 'Tour Guides',
+          services: [
+            {
+              service_key: 'MUSEUM_LANDMARK_GUIDES',
+              service_name: 'Museum & Landmark Guides',
+              service_description:
+                'Guided experiences for museums, landmarks, and important local sites.',
+              available_locations: [
+                {
+                  location_service_key: 'museum_landmark_guides_LK-KDY',
+                  location_code: 'LK-KDY',
+                  location_name: 'Kandy',
+                  location_type: 'CITY',
+                },
+                {
+                  location_service_key:
+                    'museum_landmark_guides_LK-KDY-TEMPLE_OF_TOOTH',
+                  location_code: 'LK-KDY-TEMPLE_OF_TOOTH',
+                  location_name: 'Temple of the Tooth',
+                  location_type: 'POINT',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('should not return inactive services', async () => {
+    await serviceRepository.update(
+      { service_key: 'FISHING_TRIPS' },
+      { isActive: false },
+    );
+
+    const response = await request(app.getHttpServer())
+      .get('/api/services/by-location/LK')
+      .expect(200);
+
+    const waterAndFishing = response.body.categories.find(
+      (category: { category_key: string }) =>
+        category.category_key === 'WATER_FISHING',
+    );
+
+    expect(waterAndFishing).toBeDefined();
+    expect(
+      waterAndFishing.services.map(
+        (service: { service_key: string }) => service.service_key,
+      ),
+    ).toEqual(['BOATS_YACHT_SEA']);
+  });
+
+  it('should not return inactive categories', async () => {
+    await categoryRepository.update(
+      { category_key: 'TOUR_GUIDES' },
+      { isActive: false },
+    );
+
+    const response = await request(app.getHttpServer())
+      .get('/api/services/by-location/LK')
+      .expect(200);
+
+    expect(
+      response.body.categories.map(
+        (category: { category_key: string }) => category.category_key,
+      ),
+    ).toEqual(['DRIVERS_AND_CHAUFFEURS', 'WATER_FISHING']);
+  });
+
+  it('should return 404 for an inactive location', async () => {
+    await locationRepository.update(
+      { location_code: 'LK-GAL' },
+      { isActive: false },
+    );
+
+    const response = await request(app.getHttpServer())
+      .get('/api/services/by-location/LK-GAL')
+      .expect(404);
+
+    expect(response.body).toMatchObject({
+      status: 'error',
+      error_details: {
+        error_code: 'resource_not_found',
+        message: "Location with code 'LK-GAL' not found",
+      },
+    });
+    expect(response.body.error_details.request_id).toBeDefined();
   });
 
   it('should return 404 for an unknown location code', async () => {
