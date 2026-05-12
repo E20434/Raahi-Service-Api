@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryRepository, LocationRepository, ServiceRepository, LocationServiceRepository } from './repositories';
 import { ServicesByLocationResponse, CategoryDto, LocationDto, AvailableLocationDto } from './dtos/services-by-location.dto';
-import { Location } from './entities';
+import { Location, LocationService } from './entities';
 import { ResourceNotFoundException } from '../../common/exceptions/custom.exception';
 
 @Injectable()
@@ -46,7 +46,7 @@ export class ServiceConfigService {
     const categories = await this.categoryRepository.findByIds(categoryIds);
 
     // Build a map of service key -> all location services for that service
-    const serviceLocationServicesMap = new Map<string, any[]>();
+    const serviceLocationServicesMap = new Map<string, LocationService[]>();
     for (const service of services) {
       const allServiceLocationServices = await this.locationServiceRepository.findByServiceId(service.service_key);
       serviceLocationServicesMap.set(service.service_key, allServiceLocationServices);
