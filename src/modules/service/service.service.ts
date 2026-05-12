@@ -14,13 +14,13 @@ export class ServiceConfigService {
   ) {}
 
   async getServicesByLocation(locationCode: string): Promise<ServicesByLocationResponse> {
-    const location = await this.locationRepository.findById(locationCode);
+    const location = await this.locationRepository.findByCode(locationCode);
     if (!location) {
       throw new ResourceNotFoundException(`Location with code '${locationCode}' not found`);
     }
 
     // Get all child location codes (including the parent location)
-    const allLocationCodes = await this.locationRepository.getAllChildLocationIds(locationCode);
+    const allLocationCodes = await this.locationRepository.getAllChildLocationCodes(locationCode);
 
     // Find all location services for these locations
     const locationServices = await this.locationServiceRepository.findByLocationIds(allLocationCodes);
@@ -32,18 +32,18 @@ export class ServiceConfigService {
     }
 
     // Get unique service keys
-    const serviceIds = [...new Set(locationServices.map(ls => ls.service_key))];
-    const services = await this.serviceRepository.findByIds(serviceIds);
+    const serviceKeys = [...new Set(locationServices.map(ls => ls.service_key))];
+    const services = await this.serviceRepository.findByKeys(serviceKeys);
 
     // Get all locations involved
     const allLocationCodesInServices = [...new Set(locationServices.map(ls => ls.location_code))];
     const locationsMap = new Map<string, Location>();
-    const locations = await this.locationRepository.findByIds(allLocationCodesInServices);
+    const locations = await this.locationRepository.findByCodes(allLocationCodesInServices);
     locations.forEach(loc => locationsMap.set(loc.location_code, loc));
 
     // Get categories
-    const categoryIds = [...new Set(services.map(s => s.category_key))];
-    const categories = await this.categoryRepository.findByIds(categoryIds);
+    const categoryKeys = [...new Set(services.map(s => s.category_key))];
+    const categories = await this.categoryRepository.findByKeys(categoryKeys);
 
     // Build a map of service key -> all location services for that service
     const serviceLocationServicesMap = new Map<string, LocationService[]>();

@@ -10,36 +10,36 @@ export class LocationRepository {
     private readonly repository: Repository<Location>,
   ) {}
 
-  async findById(id: string): Promise<Location | null> {
+  async findByCode(code: string): Promise<Location | null> {
     return this.repository.findOne({
-      where: { location_code: id, isActive: true },
+      where: { location_code: code, isActive: true },
     });
   }
 
-  async findByIds(ids: string[]): Promise<Location[]> {
-    if (ids.length === 0) return [];
+  async findByCodes(codes: string[]): Promise<Location[]> {
+    if (codes.length === 0) return [];
     return this.repository.find({
-      where: { location_code: In(ids), isActive: true },
+      where: { location_code: In(codes), isActive: true },
     });
   }
 
-  async getAllChildLocationIds(parentId: string): Promise<string[]> {
-    const allIds: string[] = [parentId];
-    const toProcess: string[] = [parentId];
+  async getAllChildLocationCodes(parentLocationCode: string): Promise<string[]> {
+    const allCodes: string[] = [parentLocationCode];
+    const toProcess: string[] = [parentLocationCode];
 
     while (toProcess.length > 0) {
-      const currentId = toProcess.shift()!;
+      const currentLocationCode = toProcess.shift()!;
       
       const children = await this.repository.find({
-        where: { parent_location_code: currentId, isActive: true },
+        where: { parent_location_code: currentLocationCode, isActive: true },
       });
 
       for (const child of children) {
-        allIds.push(child.location_code);
+        allCodes.push(child.location_code);
         toProcess.push(child.location_code);
       }
     }
 
-    return allIds;
+    return allCodes;
   }
 }
