@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CategoryRepository, LocationRepository, ServiceRepository, LocationServiceRepository } from './repositories';
 import { ServicesByLocationResponse, CategoryDto, LocationDto, AvailableLocationDto } from './dtos/services-by-location.dto';
 import { Location } from './entities';
+import { ResourceNotFoundException } from '../../common/exceptions/custom.exception';
 
 @Injectable()
 export class ServiceConfigService {
@@ -15,7 +16,7 @@ export class ServiceConfigService {
   async getServicesByLocation(locationId: string): Promise<ServicesByLocationResponse> {
     const location = await this.locationRepository.findById(locationId);
     if (!location) {
-      throw new Error(`Location with location_code ${locationId} not found`);
+      throw new ResourceNotFoundException(`Location with code '${locationId}' not found`);
     }
 
     // Get all child location codes (including the parent location)

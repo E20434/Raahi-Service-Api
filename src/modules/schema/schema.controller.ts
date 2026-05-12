@@ -1,6 +1,7 @@
 import { Controller, Post, Get, Body, Query, ValidationPipe, UsePipes, Param } from '@nestjs/common';
 import { SchemaService } from './schema.service';
 import { CreateServiceConfigByIdDto } from './dtos/create-service-config-by-id.dto';
+import { ResourceNotFoundException, BadRequestException } from '../../common/exceptions/custom.exception';
 
 @Controller('api/service-config')
 export class SchemaController {
@@ -10,13 +11,37 @@ export class SchemaController {
   @Post('by-service-key')
   @UsePipes(new ValidationPipe({ transform: true }))
   async createServiceConfigByKey(@Body() createDto: CreateServiceConfigByIdDto) {
-    return this.schemaService.createServiceConfigById(createDto);
+    try {
+      return await this.schemaService.createServiceConfigById(createDto);
+    } catch (error) {
+      if (
+        error instanceof ResourceNotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'Failed to create service config',
+      );
+    }
   }
 
   @Get('by-location-service/:locationServiceId')
   async getServiceConfigByLocationServiceId(
     @Param('locationServiceId') locationServiceId: string,
   ) {
-    return this.schemaService.getServiceConfigByLocationServiceId(locationServiceId);
+    try {
+      return await this.schemaService.getServiceConfigByLocationServiceId(locationServiceId);
+    } catch (error) {
+      if (
+        error instanceof ResourceNotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'Failed to retrieve service config',
+      );
+    }
   }
 }
