@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { ServiceOnboardingSchema } from './service-onboarding-schema.entity';
 
 @Entity('service_special_field')
 export class ServiceSpecialField {
@@ -35,4 +44,8 @@ export class ServiceSpecialField {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
+
+  @ManyToOne(() => ServiceOnboardingSchema, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'schema_id' })
+  schema: ServiceOnboardingSchema;
 }

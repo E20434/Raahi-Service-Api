@@ -42,7 +42,9 @@ export class SchemaController {
         throw error;
       }
       throw new BadRequestException(
-        error instanceof Error ? error.message : 'Failed to retrieve service config',
+        error instanceof Error
+          ? error.message
+          : 'Failed to retrieve service config',
       );
     }
   }

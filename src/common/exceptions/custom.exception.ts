@@ -7,7 +7,10 @@ export interface ErrorDetails {
 }
 
 export class CustomHttpException extends HttpException {
-  constructor(details: ErrorDetails, statusCode: HttpStatus = HttpStatus.BAD_REQUEST) {
+  constructor(
+    details: ErrorDetails,
+    statusCode: HttpStatus = HttpStatus.BAD_REQUEST,
+  ) {
     const requestId = `req_${Math.random().toString(36).substr(2, 9)}_alpha`;
     const response = {
       status: 'error',
@@ -16,7 +19,9 @@ export class CustomHttpException extends HttpException {
         message: details.message,
         request_id: requestId,
       },
-      ...(details.validation_errors && { validation_errors: details.validation_errors }),
+      ...(details.validation_errors && {
+        validation_errors: details.validation_errors,
+      }),
     };
     super(response, statusCode);
   }
@@ -27,7 +32,8 @@ export class ResourceNotFoundException extends CustomHttpException {
     super(
       {
         error_code: 'resource_not_found',
-        message: message || 'No record found with the identifier provided in the URI.',
+        message:
+          message || 'No record found with the identifier provided in the URI.',
       },
       HttpStatus.NOT_FOUND,
     );

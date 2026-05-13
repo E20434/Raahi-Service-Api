@@ -138,7 +138,7 @@ export class SchemaService {
 
     // Fetch the schema
     const schema = await this.schemaRepo.findOne({
-      where: { 
+      where: {
         id: locationService.onboardingSchemaId,
         serviceKey: locationService.service_key,
         isActive: true 
@@ -206,11 +206,11 @@ export class SchemaService {
         service_type: service.name, // Using service name as service_type, adjust if needed
         schema_version: schema.schemaVersion,
         rules: {
-          max_assets_allowed: schema.maxAssetsAllowed
-        }
+          max_assets_allowed: schema.maxAssetsAllowed,
+        },
       },
       special_elements,
-      asset_types: asset_types_formatted
+      asset_types: asset_types_formatted,
     };
   }
 }
