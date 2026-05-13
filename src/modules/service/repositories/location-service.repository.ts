@@ -22,4 +22,10 @@ export class LocationServiceRepository {
       where: { service_key: serviceKey, isActive: true },
     });
   }
+
+  public async findByKeys(keys: string[]): Promise<LocationService[]> {
+    return this.repository.find({
+      where: { service_location_key: In(keys) },
+    });
+  }
 }

@@ -2,10 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateServiceConfigByIdDto } from './dtos/create-service-config-by-id.dto';
-import { ServiceOnboardingSchema, SchemaStatus, ServiceSpecialField, AssetType } from './entities';
+import {
+  ServiceOnboardingSchema,
+  SchemaStatus,
+  ServiceSpecialField,
+  AssetType,
+} from './entities';
 import { Service } from '../service/entities/service.entity';
 import { LocationService } from '../service/entities/location-service.entity';
-import { ResourceNotFoundException, BadRequestException } from '../../common/exceptions/custom.exception';
+import {
+  ResourceNotFoundException,
+  BadRequestException,
+} from '../../common/exceptions/custom.exception';
 
 @Injectable()
 export class SchemaService {
@@ -23,16 +31,16 @@ export class SchemaService {
     private locationServiceRepo: Repository<LocationService>,
   ) {}
 
-
-
   async createServiceConfigById(dto: CreateServiceConfigByIdDto) {
     const { service_key, meta, special_elements = [], asset_types = [] } = dto;
     // Verify service exists by service_key
     const service = await this.serviceRepo.findOne({
-      where: { service_key: service_key }
+      where: { service_key: service_key },
     });
     if (!service) {
-      throw new ResourceNotFoundException(`Service with key '${service_key}' not found`);
+      throw new ResourceNotFoundException(
+        `Service with key '${service_key}' not found`,
+      );
     }
     // Auto-generate schema_key
     const schemaKey = `${service.service_key}_v${meta.schema_version}`;
@@ -94,11 +102,16 @@ export class SchemaService {
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      if (error instanceof BadRequestException || error instanceof ResourceNotFoundException) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ResourceNotFoundException
+      ) {
         throw error;
       }
       throw new BadRequestException(
-        error instanceof Error ? error.message : 'Failed to create service config',
+        error instanceof Error
+          ? error.message
+          : 'Failed to create service config',
       );
     } finally {
       await queryRunner.release();
@@ -108,7 +121,7 @@ export class SchemaService {
   async getServiceConfigByLocationServiceId(serviceLocationKey: string) {
     // Find LocationService by id
     const locationService = await this.locationServiceRepo.findOne({
-      where: { service_location_key: serviceLocationKey}
+      where: { service_location_key: serviceLocationKey },
     });
 
     if (!locationService) {
@@ -126,10 +139,10 @@ export class SchemaService {
 
     // Fetch the schema
     const schema = await this.schemaRepo.findOne({
-      where: { 
+      where: {
         id: locationService.onboardingSchemaId,
-        isActive: true 
-      }
+        isActive: true,
+      },
     });
 
     if (!schema) {
@@ -147,7 +160,7 @@ export class SchemaService {
 
     // Fetch service to get service_type
     const service = await this.serviceRepo.findOne({
-      where: { service_key: schema.serviceId }
+      where: { service_key: schema.serviceId },
     });
 
     if (!service) {
@@ -156,11 +169,11 @@ export class SchemaService {
 
     // Fetch special fields and asset types
     const specialFields = await this.specialFieldRepo.find({
-      where: { schemaId: schema.id, isActive: true }
+      where: { schemaId: schema.id, isActive: true },
     });
 
     const assetTypes = await this.assetTypeRepo.find({
-      where: { schemaId: schema.id, isActive: true }
+      where: { schemaId: schema.id, isActive: true },
     });
 
     // Format special elements
@@ -186,11 +199,11 @@ export class SchemaService {
         service_type: service.name, // Using service name as service_type, adjust if needed
         schema_version: schema.schemaVersion,
         rules: {
-          max_assets_allowed: schema.maxAssetsAllowed
-        }
+          max_assets_allowed: schema.maxAssetsAllowed,
+        },
       },
       special_elements,
-      asset_types: asset_types_formatted
+      asset_types: asset_types_formatted,
     };
   }
 }

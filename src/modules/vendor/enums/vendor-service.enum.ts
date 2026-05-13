@@ -1,0 +1,13 @@
+export enum VendorServiceStatus {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  NEEDS_CHANGES = 'NEEDS_CHANGES',
+}
+
+export enum AssetType {
+  VEHICLE = 'VEHICLE',
+  VESSEL = 'VESSEL',
+}

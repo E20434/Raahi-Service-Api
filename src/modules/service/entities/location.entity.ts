@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity('location')
 export class Location {
@@ -22,4 +22,8 @@ export class Location {
 
   @Column({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => Location)
+  @JoinColumn({ name: 'parent_location_code' })
+  parent: Location;
 }
