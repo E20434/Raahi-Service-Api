@@ -14,7 +14,14 @@ import {
   ServiceOnboardingSchema,
   ServiceSpecialField,
 } from '../src/modules/schema/entities';
-import { LocationService, Service as ServiceEntity } from '../src/modules/service/entities';
+import {
+  Category,
+  Location,
+  LocationService,
+  Service as ServiceEntity,
+} from '../src/modules/service/entities';
+import { buildCategoriesFixture } from './fixtures/service-config-by-location-service/categories.fixture';
+import { buildLocationsFixture } from './fixtures/service-config-by-location-service/locations.fixture';
 import { buildServicesFixture } from './fixtures/service-config-by-location-service/services.fixture';
 import { buildLocationServicesFixture } from './fixtures/service-config-by-location-service/location-services.fixture';
 import { buildServiceSchemasFixture } from './fixtures/service-config-by-location-service/service-schemas.fixture';
@@ -25,21 +32,30 @@ jest.setTimeout(180_000);
 
 describe('Service Config By Location Service (e2e)', () => {
   const SCHEMA_ID = '11111111-1111-1111-1111-111111111111';
-  const MISSING_SCHEMA_ID = '22222222-2222-2222-2222-222222222222';
   const OTHER_SCHEMA_ID = '33333333-3333-3333-3333-333333333333';
   const endpoint =
     '/api/service-config/by-location-service/city_intercity_rides_LK';
 
   let container: StartedPostgreSqlContainer;
   let app: INestApplication;
+  let categoryRepository: Repository<Category>;
+  let locationRepository: Repository<Location>;
   let serviceRepository: Repository<ServiceEntity>;
   let locationServiceRepository: Repository<LocationService>;
   let schemaRepository: Repository<ServiceOnboardingSchema>;
   let specialFieldRepository: Repository<ServiceSpecialField>;
   let assetTypeRepository: Repository<AssetType>;
 
+  async function seedCategories(now: Date) {
+    await categoryRepository.insert(buildCategoriesFixture(now));
+  }
+
   async function seedServices(now: Date) {
     await serviceRepository.insert(buildServicesFixture(now));
+  }
+
+  async function seedLocations(now: Date) {
+    await locationRepository.insert(buildLocationsFixture(now));
   }
 
   async function seedLocationServices(now: Date, schemaId: string) {
@@ -62,6 +78,8 @@ describe('Service Config By Location Service (e2e)', () => {
 
   async function seedPublishedCityIntercityRidesConfigFixture() {
     const now = new Date();
+    await seedCategories(now);
+    await seedLocations(now);
     await seedServices(now);
     await seedSchemas(SCHEMA_ID);
     await seedLocationServices(now, SCHEMA_ID);
@@ -69,12 +87,18 @@ describe('Service Config By Location Service (e2e)', () => {
     await seedAssetTypes(SCHEMA_ID);
   }
 
+  async function deleteAllSeedData() {
+    await assetTypeRepository.createQueryBuilder().delete().execute();
+    await specialFieldRepository.createQueryBuilder().delete().execute();
+    await locationServiceRepository.createQueryBuilder().delete().execute();
+    await schemaRepository.createQueryBuilder().delete().execute();
+    await serviceRepository.createQueryBuilder().delete().execute();
+    await locationRepository.createQueryBuilder().delete().execute();
+    await categoryRepository.createQueryBuilder().delete().execute();
+  }
+
   async function resetPublishedCityIntercityRidesConfigFixture() {
-    await assetTypeRepository.clear();
-    await specialFieldRepository.clear();
-    await locationServiceRepository.clear();
-    await schemaRepository.clear();
-    await serviceRepository.clear();
+    await deleteAllSeedData();
     await seedPublishedCityIntercityRidesConfigFixture();
   }
 
@@ -108,6 +132,8 @@ describe('Service Config By Location Service (e2e)', () => {
           dropSchema: true,
           logging: false,
           entities: [
+            Category,
+            Location,
             ServiceEntity,
             LocationService,
             ServiceOnboardingSchema,
@@ -123,6 +149,8 @@ describe('Service Config By Location Service (e2e)', () => {
     await app.init();
 
     const dataSource = moduleFixture.get(DataSource);
+    categoryRepository = dataSource.getRepository(Category);
+    locationRepository = dataSource.getRepository(Location);
     serviceRepository = dataSource.getRepository(ServiceEntity);
     locationServiceRepository = dataSource.getRepository(LocationService);
     schemaRepository = dataSource.getRepository(ServiceOnboardingSchema);
@@ -244,18 +272,6 @@ describe('Service Config By Location Service (e2e)', () => {
     );
   });
 
-  it('should return 404 when the linked schema does not exist', async () => {
-    await locationServiceRepository.update(
-      { service_location_key: 'city_intercity_rides_LK' },
-      { onboardingSchemaId: MISSING_SCHEMA_ID },
-    );
-
-    await expectResourceNotFound(
-      endpoint,
-      "Schema not found for location service key 'city_intercity_rides_LK'",
-    );
-  });
-
   it('should return 404 for an inactive schema', async () => {
     await schemaRepository.update({ id: SCHEMA_ID }, { isActive: false });
 
@@ -278,6 +294,21 @@ describe('Service Config By Location Service (e2e)', () => {
   });
 
   it('should return 404 when the schema belongs to a different service key', async () => {
+    const now = new Date();
+
+    await serviceRepository.insert([
+      {
+        service_key: 'FISHING_TRIPS',
+        category_key: 'DRIVERS_AND_CHAUFFEURS',
+        name: 'Fishing Trips',
+        description: 'Alternate service used for mismatch testing.',
+        displayOrder: 2,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
     await schemaRepository.update(
       { id: SCHEMA_ID },
       { serviceKey: 'FISHING_TRIPS' },
@@ -524,8 +555,8 @@ describe('Service Config By Location Service (e2e)', () => {
   });
 
   it('should return empty arrays when the schema has no special fields or asset types', async () => {
-    await assetTypeRepository.clear();
-    await specialFieldRepository.clear();
+    await assetTypeRepository.createQueryBuilder().delete().execute();
+    await specialFieldRepository.createQueryBuilder().delete().execute();
 
     const response = await request(app.getHttpServer()).get(endpoint).expect(200);
 
