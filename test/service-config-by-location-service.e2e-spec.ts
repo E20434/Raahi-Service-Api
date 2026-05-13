@@ -26,6 +26,7 @@ jest.setTimeout(180_000);
 describe('Service Config By Location Service (e2e)', () => {
   const SCHEMA_ID = '11111111-1111-1111-1111-111111111111';
   const MISSING_SCHEMA_ID = '22222222-2222-2222-2222-222222222222';
+  const OTHER_SCHEMA_ID = '33333333-3333-3333-3333-333333333333';
   const endpoint =
     '/api/service-config/by-location-service/city_intercity_rides_LK';
 
@@ -295,6 +296,231 @@ describe('Service Config By Location Service (e2e)', () => {
     );
 
     await expectResourceNotFound(endpoint, 'Service not found for schema');
+  });
+
+  it('should return only child rows for the linked schema id', async () => {
+    const now = new Date();
+
+    await schemaRepository.insert([
+      {
+        id: OTHER_SCHEMA_ID,
+        serviceKey: 'CITY_INTERCITY_RIDES',
+        schemaKey: 'CITY_INTERCITY_RIDES_ALT',
+        maxAssetsAllowed: 9,
+        schemaVersion: '9.9',
+        status: SchemaStatus.PUBLISHED,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    await specialFieldRepository.insert([
+      {
+        schemaId: OTHER_SCHEMA_ID,
+        entityType: 'DOCUMENT',
+        entityId: 'other_schema_only',
+        title: 'Other Schema Field',
+        description: 'Should not appear in the response for the linked schema.',
+        fieldsJson: [
+          {
+            type: 'TEXT_INPUT',
+            label: 'Other Schema Input',
+            field_id: 'other_schema_input',
+            validation: {
+              required: true,
+            },
+          },
+        ],
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    await assetTypeRepository.insert([
+      {
+        schemaId: OTHER_SCHEMA_ID,
+        assetTypeId: 'MOTORBIKE',
+        label: 'Motorbike',
+        description: 'Should not appear in the response for the linked schema.',
+        assetFieldsJson: [
+          {
+            type: 'TEXT_INPUT',
+            label: 'Registration Number',
+            field_id: 'registration_number',
+            validation: {
+              required: true,
+            },
+          },
+        ],
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    const response = await request(app.getHttpServer()).get(endpoint).expect(200);
+
+    expect(response.body).toEqual({
+      meta: {
+        service_type: 'City Rides, Intercity Rides',
+        schema_version: '1.0',
+        rules: {
+          max_assets_allowed: 1,
+        },
+      },
+      special_elements: [
+        {
+          entity_type: 'HUMAN',
+          entity_id: 'human_vendor',
+          title: 'Driver Profile',
+          description: 'Required credentials for the individual driver.',
+          fields: [
+            {
+              type: 'TEXT_INPUT',
+              label: 'Driver License Number',
+              field_id: 'driver_license_number',
+              validation: {
+                required: true,
+              },
+              placeholder: 'Enter your local driving license number',
+            },
+            {
+              type: 'NUMBER_INPUT',
+              label: 'Years of Driving Experience',
+              field_id: 'years_of_driving_experience',
+              validation: {
+                min: 1,
+                required: true,
+              },
+            },
+          ],
+        },
+      ],
+      asset_types: [
+        {
+          asset_type_id: 'CAR',
+          label: 'Car',
+          description:
+            'Standard car used for city or intercity rides in Sri Lanka.',
+          fields: [
+            {
+              type: 'TEXT_INPUT',
+              label: 'License Plate',
+              field_id: 'license_plate',
+              validation: {
+                required: true,
+              },
+            },
+            {
+              type: 'NUMBER_INPUT',
+              label: 'Vehicle Year',
+              field_id: 'vehicle_year',
+              validation: {
+                min: 2010,
+                required: true,
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('should not return inactive special fields', async () => {
+    await specialFieldRepository.update(
+      { entityId: 'human_vendor' },
+      { isActive: false },
+    );
+
+    const response = await request(app.getHttpServer()).get(endpoint).expect(200);
+
+    expect(response.body).toEqual({
+      meta: {
+        service_type: 'City Rides, Intercity Rides',
+        schema_version: '1.0',
+        rules: {
+          max_assets_allowed: 1,
+        },
+      },
+      special_elements: [],
+      asset_types: [
+        {
+          asset_type_id: 'CAR',
+          label: 'Car',
+          description:
+            'Standard car used for city or intercity rides in Sri Lanka.',
+          fields: [
+            {
+              type: 'TEXT_INPUT',
+              label: 'License Plate',
+              field_id: 'license_plate',
+              validation: {
+                required: true,
+              },
+            },
+            {
+              type: 'NUMBER_INPUT',
+              label: 'Vehicle Year',
+              field_id: 'vehicle_year',
+              validation: {
+                min: 2010,
+                required: true,
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('should not return inactive asset types', async () => {
+    await assetTypeRepository.update(
+      { assetTypeId: 'CAR' },
+      { isActive: false },
+    );
+
+    const response = await request(app.getHttpServer()).get(endpoint).expect(200);
+
+    expect(response.body).toEqual({
+      meta: {
+        service_type: 'City Rides, Intercity Rides',
+        schema_version: '1.0',
+        rules: {
+          max_assets_allowed: 1,
+        },
+      },
+      special_elements: [
+        {
+          entity_type: 'HUMAN',
+          entity_id: 'human_vendor',
+          title: 'Driver Profile',
+          description: 'Required credentials for the individual driver.',
+          fields: [
+            {
+              type: 'TEXT_INPUT',
+              label: 'Driver License Number',
+              field_id: 'driver_license_number',
+              validation: {
+                required: true,
+              },
+              placeholder: 'Enter your local driving license number',
+            },
+            {
+              type: 'NUMBER_INPUT',
+              label: 'Years of Driving Experience',
+              field_id: 'years_of_driving_experience',
+              validation: {
+                min: 1,
+                required: true,
+              },
+            },
+          ],
+        },
+      ],
+      asset_types: [],
+    });
   });
 
   it('should return empty arrays when the schema has no special fields or asset types', async () => {
