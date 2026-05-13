@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 import { VendorServiceStatus } from '../enums/vendor-service.enum';
 import { VendorEntity } from './vendor.entity';
-import { LocationService } from 'src/modules/service/entities';
-import { ServiceOnboardingSchema } from 'src/modules/schema/entities';
+import { LocationService } from '../../service/entities/location-service.entity';
+import { ServiceOnboardingSchema } from '../../schema/entities/service-onboarding-schema.entity';
 import { VendorSpecialDataEntity } from './vendor-special-data.entity';
 import { VendorAssetEntity } from './vendor-asset.entity';
 

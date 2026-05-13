@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Service } from './service.entity';
 import { Location } from './location.entity';
-import { ServiceOnboardingSchema } from 'src/modules/schema/entities';
+import { ServiceOnboardingSchema } from '../../schema/entities/service-onboarding-schema.entity';
 // import {} from 'src/modules/÷schema'
 
 @Entity('location_service')

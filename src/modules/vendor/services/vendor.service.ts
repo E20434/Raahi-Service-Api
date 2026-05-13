@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { VendorEntity } from '../entities/vendor.entity';
 import { In, Repository } from 'typeorm';
 import { VendorDto, VendorCreateRequestDto } from '../dtos/vendor.dto';
-import { ServiceConfigService } from 'src/modules/service/service.service';
+import { ServiceConfigService } from '../../service/service.service';
 import { VendorServiceEntity } from '../entities/vendor-service.entity';
 import { VendorAssetEntity } from '../entities/vendor-asset.entity';
 import { VendorSpecialDataEntity } from '../entities/vendor-special-data.entity';
@@ -19,7 +19,7 @@ import {
   VendorServiceDto,
   VendorSpecialDataDto,
 } from '../dtos/service.dto';
-import { LocationService } from 'src/modules/service/entities';
+import { LocationService } from '../../service/entities/location-service.entity';
 
 @Injectable()
 export class VendorService {
