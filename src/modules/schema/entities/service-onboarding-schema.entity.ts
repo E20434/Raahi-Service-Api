@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Service } from 'src/modules/service/entities';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 export enum SchemaStatus {
   DRAFT = 'draft',
@@ -34,4 +43,8 @@ export class ServiceOnboardingSchema {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
+
+  @ManyToOne(() => Service, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'service_key' })
+  service: Service;
 }

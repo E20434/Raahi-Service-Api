@@ -11,7 +11,9 @@ import {
 } from './repositories';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category, Location, Service, LocationService])],
+  imports: [
+    TypeOrmModule.forFeature([Category, Location, Service, LocationService]),
+  ],
   controllers: [ServiceConfigController],
   providers: [
     ServiceConfigService,
@@ -20,5 +22,6 @@ import {
     ServiceRepository,
     LocationServiceRepository,
   ],
+  exports: [ServiceConfigService],
 })
 export class ServiceModule {}

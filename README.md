@@ -57,6 +57,30 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Database migrations
+
+Typeorm provides easier way to generate Database migrations for upto date entities. Use following steps to generate migrations
+
+### step 1
+Updated/Create entity files with file name postfix entity (ex: vendor.entity.ts)
+
+### step 2
+Run migration:generate script as listed in below bash script sample. This will generate a migration file inside db/migrations/ folder with basic schema changes. If there any data migrations you have to manually update the migration file. Please check and clean up if there any unwanted SQL queries
+
+### step 3
+Run migration:run to apply latest migration that are not applied yet
+
+```bash
+# generate migrations
+$ DATABASE_URL='<db-url>'  npm run migration:generate db/migrations/<migration-name>
+
+# run migrations
+$ DATABASE_URL='<db-url>'  npm run migration:run
+
+# revert last migration
+$ DATABASE_URL='<db-url>'  npm run migration:revert
+```
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
