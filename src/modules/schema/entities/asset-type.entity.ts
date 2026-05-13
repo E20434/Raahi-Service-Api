@@ -29,6 +29,10 @@ export class AssetType {
   @Column({ name: 'fields_json', type: 'jsonb' })
   assetFieldsJson: any;
 
+  // TODO: Re-enable once Neon schema has the `display_order` column.
+  // @Column({ name: 'display_order', type: 'integer', default: 0 })
+  // displayOrder: number;
+
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
