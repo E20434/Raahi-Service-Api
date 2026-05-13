@@ -22,7 +22,14 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
         type: 'postgres',
 
         //  connection string
-        url: config.get<string>('DATABASE_URL'),
+        //uncomment this to test with neon db
+        //url: config.get<string>('DATABASE_URL'),
+     
+        host: config.get<string>('DB_HOST'),
+        port: Number(config.get<string>('DB_PORT') || 5444),
+        username: config.get<string>('DB_USERNAME'),
+        password: config.get<string>('DB_PASSWORD'),
+        database: config.get<string>('DB_NAME'),
 
         // Auto load entities (from feature modules)
         autoLoadEntities: true,
