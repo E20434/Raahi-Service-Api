@@ -1,12 +1,14 @@
 import { DataSource, DataSourceOptions } from "typeorm";
+import * as dotenv from "dotenv";
+dotenv.config();
+
+const isNeon = process.env.DATABASE_URL?.includes('neon.tech');
 
 const dataSourceOptions: DataSourceOptions = {
     type: 'postgres',
     url: process.env.DATABASE_URL,
     synchronize: false,
-    ssl: {
-        rejectUnauthorized: false,
-    },
+    ssl: isNeon ? { rejectUnauthorized: false } : false,
     entities: ['dist/**/*.entity.js'],
     migrations: ['dist/db/migrations/*.js'],
     migrationsTableName: "custom_migration_table",
