@@ -67,3 +67,21 @@ export class BadRequestException extends CustomHttpException {
     );
   }
 }
+
+export class ConflictException extends CustomHttpException {
+  constructor(message: string) {
+    super(
+      { error_code: 'conflict', message },
+      HttpStatus.CONFLICT,
+    );
+  }
+}
+
+export class InternalServerException extends CustomHttpException {
+  constructor(message: string) {
+    super(
+      { error_code: 'internal_server_error', message },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
+}
