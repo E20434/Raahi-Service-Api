@@ -1,4 +1,4 @@
-import { Service } from 'src/modules/service/entities';
+import { Service } from '../../service/entities/service.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -21,7 +21,7 @@ export class ServiceOnboardingSchema {
   id: string;
 
   @Column({ name: 'service_key', type: 'varchar' })
-  serviceId: string;
+  serviceKey: string;
 
   @Column({ name: 'schema_key', type: 'varchar' })
   schemaKey: string;

@@ -7,6 +7,7 @@ import {
 import request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { ServiceOnboardingSchema } from '../src/modules/schema/entities';
 import { ServiceModule } from '../src/modules/service/service.module';
 import {
   Category,
@@ -53,11 +54,15 @@ describe('Services By Location (e2e)', () => {
     await seedLocationServices(now);
   }
 
+  async function deleteAllSeedData() {
+    await locationServiceRepository.createQueryBuilder().delete().execute();
+    await serviceRepository.createQueryBuilder().delete().execute();
+    await categoryRepository.createQueryBuilder().delete().execute();
+    await locationRepository.createQueryBuilder().delete().execute();
+  }
+
   async function resetSriLankaApi1Fixture() {
-    await locationServiceRepository.clear();
-    await serviceRepository.clear();
-    await categoryRepository.clear();
-    await locationRepository.clear();
+    await deleteAllSeedData();
     await seedSriLankaApi1Fixture();
   }
 
@@ -77,7 +82,13 @@ describe('Services By Location (e2e)', () => {
           synchronize: true,
           dropSchema: true,
           logging: false,
-          entities: [Location, Category, ServiceEntity, LocationService],
+          entities: [
+            Location,
+            Category,
+            ServiceEntity,
+            LocationService,
+            ServiceOnboardingSchema,
+          ],
         }),
         ServiceModule,
       ],

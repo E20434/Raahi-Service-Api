@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsInt,
-  ValidateNested,
-  IsArray,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsInt, ValidateNested, IsArray, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class RulesDto {
@@ -96,6 +90,7 @@ class AssetTypeDto {
   fields: FieldDto[];
 }
 
+// Preserved for future re-enable of POST /api/service-config/by-service-key.
 export class CreateServiceConfigByIdDto {
   @IsString()
   service_key: string;
