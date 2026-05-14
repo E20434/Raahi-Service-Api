@@ -9,3 +9,9 @@ export enum VendorStatus {
   ACTIVE = 'ACTIVE',
   SUSPENDED = 'SUSPENDED',
 }
+
+export enum OnboardingStatus {
+  PENDING = 'PENDING',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  ONBOARDED = 'ONBOARDED',
+}

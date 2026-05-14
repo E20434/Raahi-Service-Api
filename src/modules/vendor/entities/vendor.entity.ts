@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { VendorStatus, Gender } from '../enums/vendor.enum';
+import { VendorStatus, Gender, OnboardingStatus } from '../enums/vendor.enum';
 import { VendorLanguages } from '../dtos/vendor.dto';
 
 @Entity('vendor')
@@ -60,6 +60,20 @@ export class VendorEntity {
 
   @Column({ name: 'hourly_rate', type: 'numeric', nullable: true })
   hourlyRate?: number;
+
+  @Column({ name: 'ref_code_used', type: 'varchar', nullable: true })
+  refCodeUsed?: string;
+
+  @Column({ name: 'business_name', type: 'varchar', nullable: true })
+  businessName?: string;
+
+  @Column({
+    name: 'onboarding_status',
+    type: 'enum',
+    enum: OnboardingStatus,
+    nullable: true,
+  })
+  onboardingStatus?: OnboardingStatus;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
