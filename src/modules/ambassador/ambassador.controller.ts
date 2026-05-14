@@ -39,7 +39,8 @@ export class AmbassadorController {
       if (
         error instanceof ConflictException ||
         error instanceof BadRequestException ||
-        error instanceof ResourceNotFoundException
+        error instanceof ResourceNotFoundException ||
+        error instanceof InternalServerException
       ) {
         throw error;
       }
