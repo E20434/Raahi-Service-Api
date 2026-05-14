@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -58,11 +57,11 @@ export class VendorServiceEntity {
   @JoinColumn({ name: 'vendor_id' })
   vendor: VendorEntity;
 
-  @OneToOne(() => LocationService)
+  @ManyToOne(() => LocationService)
   @JoinColumn({ name: 'service_location_key' })
   locationService: LocationService;
 
-  @OneToOne(() => ServiceOnboardingSchema)
+  @ManyToOne(() => ServiceOnboardingSchema)
   @JoinColumn({ name: 'onboarding_schema_id' })
   onboardingSchema: ServiceOnboardingSchema;
 
