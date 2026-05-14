@@ -16,7 +16,7 @@ export class AmbassadorEntity {
   @Column({ name: 'ref_code', unique: true })
   refCode: string;
 
-  @Column({ unique: true })
+  @Column({ name: 'email', unique: true })
   email: string;
 
   @Column({ nullable: true })
