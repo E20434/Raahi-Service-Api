@@ -8,6 +8,7 @@ import { ServiceModule } from './modules/service/service.module';
 import { SchemaModule } from './modules/schema/schema.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { VendorModule } from './modules/vendor/vendor.module';
+import { AmbassadorModule } from './modules/ambassador/ambassador.module';
 
 @Module({
   imports: [
@@ -24,13 +25,13 @@ import { VendorModule } from './modules/vendor/vendor.module';
 
         //  connection string
         //uncomment this to test with neon db
-        //url: config.get<string>('DATABASE_URL'),
+        url: config.get<string>('DATABASE_URL'),
      
-        host: config.get<string>('DB_HOST'),
-        port: Number(config.get<string>('DB_PORT') || 5444),
-        username: config.get<string>('DB_USERNAME'),
-        password: config.get<string>('DB_PASSWORD'),
-        database: config.get<string>('DB_NAME'),
+        // host: config.get<string>('DB_HOST'),
+        // port: Number(config.get<string>('DB_PORT') || 5444),
+        // username: config.get<string>('DB_USERNAME'),
+        // password: config.get<string>('DB_PASSWORD'),
+        // database: config.get<string>('DB_NAME'),
 
         // Auto load entities (from feature modules)
         autoLoadEntities: true,
@@ -56,6 +57,7 @@ import { VendorModule } from './modules/vendor/vendor.module';
     ServiceModule,
     SchemaModule,
     VendorModule,
+    AmbassadorModule,
   ],
   providers: [
     {
