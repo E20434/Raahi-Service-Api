@@ -61,6 +61,8 @@ export class AmbassadorService {
       throw new ConflictException('Vendor with this email already exists');
     }
 
+    // Required NOT NULL vendor fields are stored as stubs here.
+    // They are completed by the vendor during the PENDING→UNDER_REVIEW onboarding transition.
     const vendor = await this.vendorRepository.save({
       firstName: '',
       lastName: '',

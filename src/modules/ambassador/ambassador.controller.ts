@@ -60,7 +60,8 @@ export class AmbassadorController {
     } catch (error) {
       if (
         error instanceof ResourceNotFoundException ||
-        error instanceof BadRequestException
+        error instanceof BadRequestException ||
+        error instanceof InternalServerException
       ) {
         throw error;
       }
