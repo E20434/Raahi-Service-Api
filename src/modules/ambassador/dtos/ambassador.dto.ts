@@ -1,8 +1,9 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { OnboardingStatus } from '../../vendor/enums/vendor.enum';
 
 export class CreateAmbassadorDto {
   @IsString()
+  @IsNotEmpty()
   full_name: string;
 
   @IsEmail()
@@ -30,15 +31,18 @@ export class AmbassadorResponseDto {
 
 export class AmbassadorVendorRegisterDto {
   @IsString()
+  @IsNotEmpty()
   ref_code: string;
 
   @IsString()
+  @IsNotEmpty()
   business_name: string;
 
   @IsEmail()
   email: string;
 
   @IsString()
+  @IsNotEmpty()
   phone: string;
 }
 
